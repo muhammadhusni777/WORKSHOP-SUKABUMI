@@ -51,7 +51,7 @@ def on_message(client, userdata, message):
     else:
         val = (msg)
     
-    if (t == "topic_test"):
+    if (t == "sensor"):
         global topic_test
         topic_test = (msg)
         print(topic_test)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     client.loop_start()
     print("Subscribing")
 
-    client.subscribe("topic_test")
+    client.subscribe("sensor")
     
     main = table()
     
