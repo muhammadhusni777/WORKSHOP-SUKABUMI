@@ -1,11 +1,9 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <Wire.h>
-
 
 // Replace the next variables with your SSID/Password combination
-const char* ssid = "Syergie Indo Prima";
-const char* password = "tanyafandi";
+const char* ssid = "";
+const char* password = "";
 
 
 const char* mqtt_server = "192.168.1.14";
@@ -17,21 +15,15 @@ char msg[50];
 int value = 0;
 
 
-
-
-//Adafruit_BME280 bme(BME_CS); // hardware SPI
-//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
-float temperature = 0;
-float humidity = 0;
+float analog_value = 0;
+float voltage_read;
+float sensor_read;
 
 // LED Pin
 const int ledPin = 5;
 
 void setup() {
   Serial.begin(115200);
-  // default settings
-  // (you can also pass in a Wire library object like &Wire2)
-  //status = bme.begin();  
   
   setup_wifi();
   client.setServer(mqtt_server, 1883);
@@ -73,9 +65,6 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.println();
 
   // Feel free to add more if statements to control more GPIOs with MQTT
-
-  // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
-  // Changes the output state according to the message
   if (String(topic) == "lights") {
     Serial.print("Changing output to ");
     if(messageTemp == "ON"){
@@ -94,11 +83,11 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP32Client")) {
+    if (client.connect("ESP32_husni")) {
       Serial.println("connected");
       // Subscribe
       client.subscribe("lights");
-      client.subscribe("pwm");
+      
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -118,26 +107,17 @@ void loop() {
   if (now - lastMsg > 1000) {
     lastMsg = now;
     
-    // Temperature in Celsius
-    temperature = random(20,30);   
-    // Uncomment the next line to set temperature in Fahrenheit 
-    // (and comment the previous temperature line)
-    //temperature = 1.8 * bme.readTemperature() + 32; // Temperature in Fahrenheit
     
-    // Convert the value to a char array
-    char tempString[8];
-    dtostrf(temperature, 1, 2, tempString);
+    analog_value = analogRead(A0);   
+    voltage_read = map(analog_value, 0, 1023, 0, 3300); // dalam mili volt. 
+    sensor_read = voltage_read/10; //
+    
+    
+    char sensor_read_send[8];
+    dtostrf(sensor_read, 1, 2, sensor_read_send);
     Serial.print("Temperature: ");
-    Serial.println(tempString);
-    client.publish("payout", tempString);
+    Serial.println(sensor_read_send);
+    client.publish("sensor", sensor_read_send);
 
-    humidity = random(20,30);
-    
-    // Convert the value to a char array
-    char humString[8];
-    dtostrf(humidity, 1, 2, humString);
-    Serial.print("Humidity: ");
-    Serial.println(humString);
-    client.publish("tension", humString);
   }
 }
