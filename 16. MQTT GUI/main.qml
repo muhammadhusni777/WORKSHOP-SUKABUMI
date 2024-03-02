@@ -57,11 +57,11 @@ Window {
 		
 		onClicked:{
 			if(button1.checked == true){
-				backend.button1("off")
+				backend.button1("OFF")
 			}
 			
 			if(button1.checked == false){
-				backend.button1("on")
+				backend.button1("ON")
 			}
 		}
 		

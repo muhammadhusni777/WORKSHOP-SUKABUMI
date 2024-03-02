@@ -68,6 +68,8 @@ Window {
 	}
 	
 	
+	
+	
 	Timer{
 		id:tmgauge
 		interval: 50

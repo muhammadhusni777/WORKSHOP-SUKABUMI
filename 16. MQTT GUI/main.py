@@ -10,7 +10,7 @@ from PyQt5.QtQuick import *
 import sys
 import paho.mqtt.client as paho
 
-broker="127.0.0.1"
+broker="broker.emqx.io"
 #broker="mqtt.ardumeka.com"#"broker.emqx.io"
 #port = 11219
 port = 1883
@@ -34,7 +34,7 @@ class table(QObject):
         global button1_status
         print(message)
         button1_status = message
-        client.publish("led",str(message))
+        client.publish("STMIK/ALFATH/0/relay",str(message))
         
     
     @pyqtSlot(result=str)
@@ -51,7 +51,7 @@ def on_message(client, userdata, message):
     else:
         val = (msg)
     
-    if (t == "sensor"):
+    if (t == "STMIK/ALFATH/0/sensor"):
         global topic_test
         topic_test = (msg)
         print(topic_test)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     client.loop_start()
     print("Subscribing")
 
-    client.subscribe("sensor")
+    client.subscribe("STMIK/ALFATH/0/sensor")
     
     main = table()
     

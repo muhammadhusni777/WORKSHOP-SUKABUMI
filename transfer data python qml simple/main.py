@@ -30,7 +30,6 @@ class table(QObject):
         global button1_status
         print(message)
         button1_status = message
-        client.publish("led",str(message))
         
     
     @pyqtSlot(result=str)
